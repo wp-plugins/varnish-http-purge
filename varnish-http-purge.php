@@ -29,7 +29,6 @@ class VarnishPurger
             'publish_post',
             'edit_post',
             'deleted_post',
-            'save_post',
         );
     }
 
