@@ -40,6 +40,11 @@ class VarnishPurger
         {
             $this->purgeUrl($url);
         }
+        
+        if (!empty($purgeUrls))
+        {
+            $this->purgeUrl(home_url());
+        }        
     }
 
     protected function purgeUrl($url)
