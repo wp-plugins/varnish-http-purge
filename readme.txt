@@ -3,7 +3,7 @@ Contributors: Leon Weidauer
 Tags: varnish, purge, cache
 Requires at least: 1.0.0
 Tested up to: 3.2.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 
 == Description ==
 Plugin for invalidating Wordpress items on a Varnish 3 Cache.
