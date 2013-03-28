@@ -17,7 +17,7 @@ Copyright 2013: Mika A. Epstein (email: ipstenu@ipstenu.org)
     Varnish HTTP Purge is free software: you can redistribute it and/or modify
     it under the terms of the Apache License 2.0 license.
 
-    DreamObjects is distributed in the hope that it will be useful,
+    Varnish HTTP Purge is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
