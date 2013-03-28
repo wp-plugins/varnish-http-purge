@@ -2,11 +2,26 @@
 /*
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
-Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. Works with Varnish 3.
-Version: 1.2.0
-Author: Leon Weidauer
-Author URI: http:/www.lnwdr.de/
-License: Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
+Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
+Version: 2.0
+Author: Mika Epstein
+Author URI: http://halfelf.org/
+License: http://www.apache.org/licenses/LICENSE-2.0
+
+Original Author: Leon Weidauer ( http:/www.lnwdr.de/ )
+
+Copyright 2013: Mika A. Epstein (email: ipstenu@ipstenu.org)
+
+    This file is part of Varnish HTTP Purge, a plugin for WordPress.
+
+    Varnish HTTP Purge is free software: you can redistribute it and/or modify
+    it under the terms of the Apache License 2.0 license.
+
+    DreamObjects is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+
 */
 
 class VarnishPurger
@@ -19,7 +34,6 @@ class VarnishPurger
         {
             add_action($event, array($this, 'purgePost'));
         }
-
         add_action('shutdown', array($this, 'executePurge'));
     }
 
@@ -49,10 +63,17 @@ class VarnishPurger
 
     protected function purgeUrl($url)
     {
-        $c = curl_init($url);
-        curl_setopt($c, CURLOPT_CUSTOMREQUEST, 'PURGE');
-        curl_exec($c);
-        curl_close($c);    
+        //$c = curl_init($url);
+        //curl_setopt($c, CURLOPT_CUSTOMREQUEST, 'PURGE');
+        
+        // http://wordpress.org/support/topic/plugin-varnish-http-purge-incompatibility-with-woocommerce?replies=6
+        //curl_setopt($c, CURLOPT_RETURNTRANSFER, true); 
+        
+        //curl_exec($c);
+        //curl_close($c);
+        
+        // http://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin?replies=1
+        wp_remote_request($url, array('method' => 'PURGE'));
     }
 
     public function purgePost($postId)
@@ -62,4 +83,3 @@ class VarnishPurger
 }
 
 $purger = new VarnishPurger();
-
