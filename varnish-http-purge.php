@@ -5,7 +5,7 @@ Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. Works with Varnish 3.
 Version: 1.2.0
 Author: Leon Weidauer
-Author URI: http:/sevenmil.es/
+Author URI: http:/www.lnwdr.de/
 License: Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0
 */
 
