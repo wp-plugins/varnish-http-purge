@@ -27,7 +27,7 @@ This was built and tested on Varnish 3.x, however it is reported to work on 2.x.
 
 Make sure your Varnish VCL is configured correctly to purge all the right pages.
 
-= Can I use this with a prodxy service like CloudFlare? =
+= Can I use this with a proxy service like CloudFlare? =
 
 Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
 
@@ -75,10 +75,6 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 
 = 2.2 =
 * Added in workaround for Varnish purge reqs going AWOL when another proxy server is in place. (props to Shredder and Berler)
-
-= 2.1 =
-* Removed old code that had been commented out.
-* Add in purge for gzip'd files too (props <a href="http://wordpress.org/support/topic/does-not-purge-compressed-objects-in-varnish-20">jumpzork</a>) - Varnish 2.x support.
 * Header Image
 
 = 2.0 =

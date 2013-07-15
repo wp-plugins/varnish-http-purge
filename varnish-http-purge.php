@@ -71,12 +71,10 @@ class VarnishPurger
             $varniship = get_option('vhp_varnish_ip');
         } 
         
-        // If we set varniship, we should use it.
-        // curl -H "Host: realdomain.com" http://1.2.3.4/path/foo
+        // If we set varniship, we should let it sail, Berler!
         $p = parse_url($url);
         $purgehost = $p['host'];
         if ( isset($varniship) ) {
-            // THIS MAY NOT BE RIGHT!
             $purgeme = $p['scheme'].'://'.$varniship.'/'.$p['path'];
         } else {
             $purgeme = $url;
@@ -84,8 +82,6 @@ class VarnishPurger
     
         // Cleanup CURL functions to be wp_remore_request and thus better
         // http://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin
-        
-        // URL MAY NOT BE RIGHT!
         wp_remote_request($purgeme, array('method' => 'PURGE', 'headers' => array( 'host' => $purgehost) ) );
     }
 
