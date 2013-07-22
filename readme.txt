@@ -86,6 +86,9 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 
 == Changelog ==
 
+= 2.2.1 = 
+* typo (hit . instead of / - Props John B. Manos)
+
 = 2.2 =
 * Added in workaround for Varnish purge reqs going AWOL when another proxy server is in place. (props to Shredder and Berler)
 * Cache flushes when you change themes
