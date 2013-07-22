@@ -3,7 +3,7 @@ Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 2.0
+Stable tag: 2.2
 
 Purge Varnish Cache when pages are modified.
 
@@ -23,6 +23,16 @@ Varnish must be installed on your webserver. This is outside of WordPress, and i
 
 This was built and tested on Varnish 3.x, however it is reported to work on 2.x. It is only supported on v3 at this time.
 
+= Why doesn't my CSS purge when I change it? =
+
+Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache.
+
+= So why doesn't your plugin have a 'purge Varnish Cache' button? =
+
+Because not everyone has the same setup. The basic command would be this: `curl -X purge http://example.com'`
+
+Depending on how your Varnish server is configured, this may not be the exact command, hence no magic button. Sorry.
+
 = Why don't my gzip'd pages flush? =
 
 Make sure your Varnish VCL is configured correctly to purge all the right pages.
@@ -30,10 +40,6 @@ Make sure your Varnish VCL is configured correctly to purge all the right pages.
 = Can I use this with a proxy service like CloudFlare? =
 
 Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
-
-= How come my CSS changes aren't showing up? =
-
-Because this plugin only flushes posts, pages, and comments. If you're editing CSS, you need to flush Varnish on your server as a whole.
 
 If you use the Jetpack CSS editor, however, your changes will show up.
 
@@ -58,8 +64,15 @@ To fix this, add the following to your wp-config.php file:
 
 `define('VHP_VARNISH_IP','123.45.67.89');`
 
-Replace "123.45.67.89" with the IP of your <em>Varnish Server</em> (not CloudFlare, Varnish).
-<em>DO NOT</em> put in http in this define.
+Replace "123.45.67.89" with the IP of your <em>Varnish Server</em> (not CloudFlare, Varnish). <em>DO NOT</em> put in http in this define.
+
+You can also set the option `vhp_varnish_ip` in the database. This will NOT take precedence over the define, however it's there to let hosts who are using something like wp-cli do this:
+
+`wp option add vhp_varnish_ip 123.45.67.89`
+
+and
+
+`wp option update vhp_varnish_ip 123.45.67.890`
 
 = How do I find my Varnish IP? =
 
@@ -75,6 +88,9 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 
 = 2.2 =
 * Added in workaround for Varnish purge reqs going AWOL when another proxy server is in place. (props to Shredder and Berler)
+* Cache flushes when you change themes
+
+= 2.1 =
 * Header Image
 
 = 2.0 =
