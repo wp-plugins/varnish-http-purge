@@ -1,11 +1,11 @@
 === Varnish HTTP Purge ===
 Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
-Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 2.2.1
+Requires at least: 3.4
+Tested up to: 3.6
+Stable tag: 2.3
 
-Purge Varnish Cache when pages are modified.
+Purge your Varnish cache when pages are modified.
 
 == Description ==
 Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time it it modified. This occurs when editing, publishing, commenting or deleting an item.
@@ -27,11 +27,11 @@ This was built and tested on Varnish 3.x, however it is reported to work on 2.x.
 
 Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache.
 
-= So why doesn't your plugin have a 'purge Varnish Cache' button? =
+<em>NB: Changing themes purges cache as of 2.3</em>
 
-Because not everyone has the same setup. The basic command would be this: `curl -X purge http://example.com'`
+= How do I purge the whole cache? =
 
-Depending on how your Varnish server is configured, this may not be the exact command, hence no magic button. Sorry.
+Manually via SSH right now. There should be a magical Purge Button for version 3.0, but it's not rock solid yet. The main problem is making it work for the largest number of setups. That version is available in trunk right now, if you really want to play with it.
 
 = Why don't my gzip'd pages flush? =
 
@@ -51,6 +51,7 @@ Because PageSpeed likes to put in Caching headers to say not to cache. To fix th
 <IfModule pagespeed_module>
     ModPagespeed on
     ModPagespeedModifyCachingHeaders off
+    [The rest of your rules here]
 </IfModule>
 `
 
@@ -85,6 +86,10 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 </ul>
 
 == Changelog ==
+
+= 2.3 =
+* Purge images on deletion
+* Fix for a VarnishIP when behind proxy servers not working on all hosts (props Berler)
 
 = 2.2.1 = 
 * typo (hit . instead of / - Props John B. Manos)
