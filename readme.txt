@@ -1,9 +1,9 @@
 === Varnish HTTP Purge ===
 Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
-Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 2.2.1
+Requires at least: 3.4
+Tested up to: 3.6
+Stable tag: 2.3
 
 Purge Varnish Cache when pages are modified.
 
@@ -27,11 +27,11 @@ This was built and tested on Varnish 3.x, however it is reported to work on 2.x.
 
 Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache.
 
-= So why doesn't your plugin have a 'purge Varnish Cache' button? =
+<em>NB: Changing themes purges cache as of 2.3</em>
 
-Because not everyone has the same setup. The basic command would be this: `curl -X purge http://example.com'`
+= How do I purge the whole cache? =
 
-Depending on how your Varnish server is configured, this may not be the exact command, hence no magic button. Sorry.
+Click the 'Purge Varnish' button on the admin toolbar. This is <em>only</em> visible to admins, and only on the backend of WordPress.
 
 = Why don't my gzip'd pages flush? =
 
@@ -85,6 +85,13 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 </ul>
 
 == Changelog ==
+
+= 3.0 =
+* Adds 'Purge Varnish' button to admin toolbar on the back end.
+
+= 2.3 =
+* Purge images on deletion
+* Fix for a VarnishIP when behind proxy servers not working on all hosts (props Berler)
 
 = 2.2.1 = 
 * typo (hit . instead of / - Props John B. Manos)

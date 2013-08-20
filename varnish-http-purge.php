@@ -3,7 +3,7 @@
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
-Version: 2.2.1
+Version: 3.0
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 License: http://www.apache.org/licenses/LICENSE-2.0
@@ -35,17 +35,28 @@ class VarnishPurger {
             add_action( $event, array($this, 'purgePost') );
         }
         add_action( 'shutdown', array($this, 'executePurge') );
-        /*
         
-        // This section is for something ELSE coming soon. It's not ready yet. 
+        add_action( 'admin_bar_menu', array( $this, "varnish_links" ), 100 );
         
-        add_action( 'admin_bar_menu', array($this, 'admin_bar_menu'), 999 );
-
-        if ( current_user_can('manage_options') && isset($_GET['flush_varnish']) ) {
-            do_action( array($this, 'executePurge') );
-            add_action('admin_notices', array( $this , 'FlushMessage'));
+        if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('helf_vhp') ) {
+            add_action( 'admin_notices', array($this, 'executePurge') );
+            add_action( 'admin_notices' , array( $this, 'purgeMessage'));
         }
-        */
+    }
+
+    function purgeMessage() {
+        echo "<div id='message' class='updated fade'><p><strong>".__('Varnish purge flushed!', helf_vhp)."</strong></p></div>";
+    }
+    
+    function varnish_links() {
+        global $wp_admin_bar;
+          if ( !is_super_admin() || !is_admin_bar_showing() || !is_admin() )
+        return;
+
+        $url = wp_nonce_url(admin_url('?vhp_flush_all'), 'helf_vhp');
+    
+        /* Add the main siteadmin menu item */
+        $wp_admin_bar->add_menu( array( 'id' => 'varnish_text', 'title' => __( 'Purge Varnish', helf_vhp ), 'href' => $url ) );
     }
 
     protected function getRegisterEvents() {
@@ -54,6 +65,7 @@ class VarnishPurger {
             'edit_post',
             'deleted_post',
             'switch_theme',
+            'delete_attachment'
         );
     }
 
@@ -83,7 +95,7 @@ class VarnishPurger {
 
         // If we set varniship, let it sail
         if ( isset($varniship) ) {
-            $purgeme = $p['scheme'].'://'.$varniship.'/'.$p['path'];
+            $purgeme = $p['scheme'].'://'.$varniship$p['path'];
         } else {
             $purgeme = $url;
         }
@@ -96,35 +108,7 @@ class VarnishPurger {
     public function purgePost($postId) {
         array_push($this->purgeUrls, get_permalink($postId));
     }
-    
-    /*
-    
-    // This section is coming soon.
-    
-    function admin_bar_menu() {
-        global $wp_admin_bar;
 
-        if (current_user_can('manage_options') && is_admin() ) {
-            $menu_items = array(
-                array(
-                    'id'    => 'varnishhp',
-                    'title' => __('Varnish Purge', 'varnishhp'),
-                    'href' => '#&amp;flush_varnish'
-                )
-            );
-            
-            foreach ($menu_items as $menu_item) {
-                $wp_admin_bar->add_menu($menu_item);
-            }
-        
-        }
-    }
-
-    function FlushMessage() {
-        echo "<div id='message' class='updated fade'><p><strong>".__('Cache Flushed!')."</strong></p></div>";
-    }
-
-    */
 }
 
 $purger = new VarnishPurger();
