@@ -73,7 +73,7 @@ class VarnishPurger {
 
         // If we set varniship, let it sail
         if ( isset($varniship) ) {
-            $purgeme = $p['scheme'].'://'.$varniship$p['path'];
+            $purgeme = $p['scheme'].'://'.$varniship.''.$p['path'];
         } else {
             $purgeme = $url;
         }
