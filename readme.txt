@@ -8,14 +8,27 @@ Stable tag: 2.3
 Purge Varnish Cache when pages are modified.
 
 == Description ==
-Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time it it modified. This occurs when editing, publishing, commenting or deleting an item.
+Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time it it modified. This occurs when editing, publishing, commenting or deleting an item, and when changing themes.
 
-<a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents.
+<a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents. This plugin <em>does not</em> install Varnish for you. It's expected you already did that.
+
+Not all pages are purged, depending on your Varnish configuration. By default, the plugin will purge the following:
+
+* The front page
+* The post/page edited
+* Any categories or tags associated with the page
 
 == Installation ==
-No configuration needed.
+No WordPress configuration needed.
 
-Varnish must be installed on your webserver. This is outside of WordPress, and is under the purview of your webhost.
+= Requirements =
+Pretty Permalinks must be enabled.
+
+Varnish 3.x or higher must be installed on your webserver.
+
+= Varnish Config Best Practices =
+
+<em>Coming Soon</em>
 
 == Frequently Asked Questions ==
 
@@ -31,17 +44,23 @@ Because the plugin only purges your <em>content</em> when you edit it. That mean
 
 = How do I purge the whole cache? =
 
-Click the 'Purge Varnish' button on the admin toolbar. This is <em>only</em> visible to admins, and only on the backend of WordPress.
+Click the 'Purge Varnish Cache' button on the "Right Now" Dashboard (see the screenshot if you can't find it).
+
+= Why doesn't anything flush unless I force it? =
+
+Are you using Pretty Permalinks? If not, that's why.
+
+= Why aren't some pages flushing on post? =
+
+The only pages that should purge are the post's page, the front page, categories, and tags. The reason why is a little philosophical. 
+
+When building out this plugin, there were a couple pathways on how best to handle purging caches and they boiled down to two: Decisions (the plugin purges what it purges when it purges) and Options (you decide what to purge, when and why). It's entirely possible to make this plugin purge everything, every time a 'trigger' happens, have it purge some things, or have it be so you can pick that purges.
+
+In the interests of design, we decided that the KISS principle was key. Since you can configure your Varnish to always purge all pages recursively (i.e. purging http://example.com would purge all pages below it), if that's a requirement, you can set it yourself. There are also other Varnish plugins that allow for more granular control (including W3 Total Cache), however this plugin will not be gaining a whole bunch of options to handle that.
 
 = Why don't my gzip'd pages flush? =
 
-Make sure your Varnish VCL is configured correctly to purge all the right pages.
-
-= Can I use this with a proxy service like CloudFlare? =
-
-Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
-
-If you use the Jetpack CSS editor, however, your changes will show up.
+Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported. If you're not sure, ask your host if Varnish is set to purge gzip'd pages.
 
 = Why is nothing caching when I use PageSpeed? =
 
@@ -55,6 +74,12 @@ Because PageSpeed likes to put in Caching headers to say not to cache. To fix th
 `
 
 If you're using nginx, it's `pagespeed ModifyCachingHeaders off;`
+
+= Can I use this with a proxy service like CloudFlare? =
+
+Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
+
+If you use the Jetpack CSS editor, however, your changes will show up.
 
 = Why aren't my changes showing when I use CloudFlare or another proxy? =
 
@@ -87,7 +112,9 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 == Changelog ==
 
 = 3.0 =
-* Adds 'Purge Varnish' button to admin toolbar on the back end.
+* Adds 'Purge Varnish' button
+* More selective purging, to account for different server setups
+* Clarify requirements (Varnish and Pretty Permalinks)
 
 = 2.3 =
 * Purge images on deletion
