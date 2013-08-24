@@ -137,3 +137,7 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 = 1.2.0 =
 * Moved actual request execution to "shutdown" event
 * Removed GET request due to bad performance impact
+
+== Screenshots ==
+
+1. What the button looks like
