@@ -12,11 +12,18 @@ Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time
 
 <a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents. This plugin <em>does not</em> install Varnish for you. It's expected you already did that.
 
-Not all pages are purged, depending on your Varnish configuration. By default, the plugin will purge the following:
+Not all pages are purged every time, depending on your Varnish configuration. By default, the plugin will purge the following:
+
+When a post, page, or custom post type is edited, or a new comment is added, the following pages will purge:
 
 * The front page
 * The post/page edited
 * Any categories or tags associated with the page
+
+In addition, your entire cache will be purged on the following actions:
+
+* Changing permalinks
+* Changing themes
 
 == Installation ==
 No WordPress configuration needed.
@@ -36,31 +43,23 @@ Varnish 3.x or higher must be installed on your webserver.
 
 This was built and tested on Varnish 3.x, however it is reported to work on 2.x. It is only supported on v3 at this time.
 
-= Why doesn't my CSS purge when I change it? =
-
-Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache.
-
-<em>NB: Changing themes purges cache as of 2.3</em>
-
-= How do I purge the whole cache? =
-
-Click the 'Purge Varnish Cache' button on the "Right Now" Dashboard (see the screenshot if you can't find it).
-
-= Why doesn't anything flush unless I force it? =
-
-Are you using Pretty Permalinks? If not, that's why.
-
-= Why aren't some pages flushing on post? =
+= Why doesn't every page flush when I make a new post? =
 
 The only pages that should purge are the post's page, the front page, categories, and tags. The reason why is a little philosophical. 
 
 When building out this plugin, there were a couple pathways on how best to handle purging caches and they boiled down to two: Decisions (the plugin purges what it purges when it purges) and Options (you decide what to purge, when and why). It's entirely possible to make this plugin purge everything, every time a 'trigger' happens, have it purge some things, or have it be so you can pick that purges.
 
-In the interests of design, we decided that the KISS principle was key. Since you can configure your Varnish to always purge all pages recursively (i.e. purging http://example.com would purge all pages below it), if that's a requirement, you can set it yourself. There are also other Varnish plugins that allow for more granular control (including W3 Total Cache), however this plugin will not be gaining a whole bunch of options to handle that.
+In the interests of design, we decided that the KISS principle was key. Since you can configure your Varnish to always purge all pages recursively (i.e. purging http://example.com/ would purge all pages below it), if that's a requirement, you can set it yourself. There are also other Varnish plugins that allow for more granular control (including W3 Total Cache), however this plugin will not be gaining a whole bunch of options to handle that.
 
-= Why don't my gzip'd pages flush? =
+= Why doesn't my cache purge when I edit my theme? =
 
-Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported. If you're not sure, ask your host if Varnish is set to purge gzip'd pages.
+Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache. The plugin will do this for you if you change your theme, but not when you edit your theme. 
+
+That said, if you use Jetpack's CSS editor, it will purge the whole cache on save.
+
+= How do I manually purge the whole cache? =
+
+Click the 'Purge Varnish Cache' button on the "Right Now" Dashboard (see the screenshot if you can't find it).
 
 = Why is nothing caching when I use PageSpeed? =
 
@@ -108,6 +107,22 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 <ul>
     <li><strong>DreamHost</strong> - If you're using DreamPress, go into the Panel and click on the DNS settings for the domain. The entry for <em>resolve-to.domain</em> is your varnish server: `resolve-to.www A 208.97.157.172`</li>
 </ul>
+
+= Why don't my gzip'd pages flush? =
+
+Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported. If you're not sure, ask your host if Varnish is set to purge gzip'd pages.
+
+= Why isn't the whole cache purge working? =
+
+The plugin sends a PURGE command of <code>/.*</code> and `X-Purge-Method` in the header with a value of regex. If your Varnish server doesn't doesn't understand the wildcard, you can configure it to check for the header.
+
+= How do I configure my VCL? =
+
+This is a beyond this plugin question, however here are some links to other people who use this plugin and have made public their VCLs:
+
+* <a href="https://github.com/dreamhost/varnish-vcl-collection">DreamHost's Varnish VCL Collection</a>
+
+All of these VCLs work with this plugin.
 
 == Changelog ==
 

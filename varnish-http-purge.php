@@ -23,8 +23,6 @@ Copyright 2013: Mika A. Epstein (email: ipstenu@ipstenu.org)
 
 */
 
-//$GLOBALS['wp_rewrite']->using_permalinks()
-
 class VarnishPurger {
     protected $purgeUrls = array();
     
@@ -36,17 +34,26 @@ class VarnishPurger {
     
     public function init() {
         foreach ($this->getRegisterEvents() as $event) {
-            add_action( $event, array($this, 'purgePost') );
+            add_action( $event, array($this, 'purgePost'), 10, 2 );
         }
         add_action( 'shutdown', array($this, 'executePurge') );
 
         if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('helf_vhp') ) {
             add_action( 'admin_notices' , array( $this, 'purgeMessage'));
         }
+
+        if ( '' == get_option( 'permalink_structure' ) && current_user_can('manage_options') ) {
+            add_action( 'admin_notices' , array( $this, 'prettyPermalinksMessage'));
+        }
+
     }
 
     function purgeMessage() {
         echo "<div id='message' class='updated fade'><p><strong>".__('Varnish purge flushed!', helf_vhp)."</strong></p></div>";
+    }
+    
+    function prettyPermalinksMessage() {
+        echo "<div id='message' class='error'><p>".__( 'Varnish HTTP Purge requires you to use custom permalinks. Please go to the <a href="options-permalink.php">Permalinks Options Page</a> to configure them.', helf_vhp )."</p></div>";
     }
 
     function varnish_rightnow() {
@@ -71,11 +78,13 @@ class VarnishPurger {
 
     protected function getRegisterEvents() {
         return array(
-            'publish_post',
-            'edit_post',
+            'save_post',
             'deleted_post',
+            'trashed_post',
+            'edit_post',
+            'delete_attachment',
             'switch_theme',
-            'delete_attachment'
+            'generate_rewrite_rules'
         );
     }
 
@@ -86,9 +95,7 @@ class VarnishPurger {
             $this->purgeUrl($url);
         }
         
-        if (!empty($purgeUrls)) {
-            $this->purgeUrl(home_url());
-        } else {
+        if (empty($purgeUrls)) {
             if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('helf_vhp') ) { 
                 $this->purgeUrl( home_url() .'/?vhp=regex' );
             }
@@ -101,9 +108,9 @@ class VarnishPurger {
         
         if ( $p['query'] == 'vhp=regex' ) {
             $pregex = '.*';
-            $varnish_x_purge = 'regex';
+            $varnish_x_purgemethod = 'regex';
         } else {
-            $varnish_x_purge = 'direct';
+            $varnish_x_purgemethod = 'exact';
         }
 
         // Build a varniship
@@ -122,35 +129,44 @@ class VarnishPurger {
 
         // Cleanup CURL functions to be wp_remote_request and thus better
         // http://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin
-        wp_remote_request($purgeme, array('method' => 'PURGE', 'headers' => array( 'host' => $p['host'], 'X-Purge' => $varnish_x_purge ) ) );
+        wp_remote_request($purgeme, array('method' => 'PURGE', 'headers' => array( 'host' => $p['host'], 'X-Purge-Method' => $varnish_x_purge ) ) );
     }
 
     public function purgePost($postId) {
     
-        // Category & Tag purge based on Donnacha's work in WP Super Cache
-        $categories = get_the_category($postId);
-        if ( $categories ) {
-            $category_base = get_option( 'category_base');
-            if ( $category_base == '' )
-                $category_base = '/category/';
-            $category_base = trailingslashit( $category_base );
-            foreach ($categories as $cat) {
-                array_push($this->purgeUrls, home_url( $category_base . $cat->slug . '/' ) );
-            }
-        }
-        
-        $tags = get_the_tags($postId);
-        if ( $tags ) {
-            $tag_base = get_option( 'tag_base' );
-            if ( $tag_base == '' )
-                $tag_base = '/tag/';
-            $tag_base = trailingslashit( str_replace( '..', '', $tag_base ) ); 
-            foreach ($tags as $tag) {
-                array_push($this->purgeUrls, home_url( $tag_base . $tag->slug . '/' ) );
-            }
-        }
+        // If this is a valid post we want to purge the post, the home page and any associated tags & cats
+        // If not, purge everything on the site.
     
-        array_push($this->purgeUrls, get_permalink($postId));
+        $validPostStatus = array("publish", "trash");
+        $thisPostStatus  = get_post_status($postId);
+    
+        if ( get_permalink($postId) == true && in_array($thisPostStatus, $validPostStatus) ) {
+            // Category & Tag purge based on Donnacha's work in WP Super Cache
+            $categories = get_the_category($postId);
+            if ( $categories ) {
+                $category_base = get_option( 'category_base');
+                if ( $category_base == '' )
+                    $category_base = '/category/';
+                $category_base = trailingslashit( $category_base );
+                foreach ($categories as $cat) {
+                    array_push($this->purgeUrls, home_url( $category_base . $cat->slug . '/' ) );
+                }
+            }            
+            $tags = get_the_tags($postId);
+            if ( $tags ) {
+                $tag_base = get_option( 'tag_base' );
+                if ( $tag_base == '' )
+                    $tag_base = '/tag/';
+                $tag_base = trailingslashit( str_replace( '..', '', $tag_base ) ); 
+                foreach ($tags as $tag) {
+                    array_push($this->purgeUrls, home_url( $tag_base . $tag->slug . '/' ) );
+                }
+            }
+            array_push($this->purgeUrls, get_permalink($postId) );
+            array_push($this->purgeUrls, home_url() );
+        } else {
+            array_push($this->purgeUrls, home_url( '?vhp=regex') );
+        }
     }
 
 }
