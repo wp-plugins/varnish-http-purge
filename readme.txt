@@ -1,21 +1,41 @@
 === Varnish HTTP Purge ===
 Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
-Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 2.2.1
+Requires at least: 3.4
+Tested up to: 3.6
+Stable tag: 3.0
 
 Purge Varnish Cache when pages are modified.
 
 == Description ==
-Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time it it modified. This occurs when editing, publishing, commenting or deleting an item.
+Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time it it modified. This occurs when editing, publishing, commenting or deleting an item, and when changing themes.
 
-<a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents.
+<a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents. This plugin <em>does not</em> install Varnish for you. It's expected you already did that.
+
+Not all pages are purged every time, depending on your Varnish configuration. By default, the plugin will purge the following:
+
+When a post, page, or custom post type is edited, or a new comment is added, the following pages will purge:
+
+* The front page
+* The post/page edited
+* Any categories or tags associated with the page
+
+In addition, your entire cache will be purged on the following actions:
+
+* Changing permalinks
+* Changing themes
 
 == Installation ==
-No configuration needed.
+No WordPress configuration needed.
 
-Varnish must be installed on your webserver. This is outside of WordPress, and is under the purview of your webhost.
+= Requirements =
+Pretty Permalinks must be enabled.
+
+Varnish 3.x or higher must be installed on your webserver.
+
+= Varnish Config Best Practices =
+
+<em>Coming Soon</em>
 
 == Frequently Asked Questions ==
 
@@ -23,25 +43,23 @@ Varnish must be installed on your webserver. This is outside of WordPress, and i
 
 This was built and tested on Varnish 3.x, however it is reported to work on 2.x. It is only supported on v3 at this time.
 
-= Why doesn't my CSS purge when I change it? =
+= Why doesn't every page flush when I make a new post? =
 
-Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache.
+The only pages that should purge are the post's page, the front page, categories, and tags. The reason why is a little philosophical. 
 
-= So why doesn't your plugin have a 'purge Varnish Cache' button? =
+When building out this plugin, there were a couple pathways on how best to handle purging caches and they boiled down to two: Decisions (the plugin purges what it purges when it purges) and Options (you decide what to purge, when and why). It's entirely possible to make this plugin purge everything, every time a 'trigger' happens, have it purge some things, or have it be so you can pick that purges.
 
-Because not everyone has the same setup. The basic command would be this: `curl -X purge http://example.com'`
+In the interests of design, we decided that the KISS principle was key. Since you can configure your Varnish to always purge all pages recursively (i.e. purging http://example.com/ would purge all pages below it), if that's a requirement, you can set it yourself. There are also other Varnish plugins that allow for more granular control (including W3 Total Cache), however this plugin will not be gaining a whole bunch of options to handle that.
 
-Depending on how your Varnish server is configured, this may not be the exact command, hence no magic button. Sorry.
+= Why doesn't my cache purge when I edit my theme? =
 
-= Why don't my gzip'd pages flush? =
+Because the plugin only purges your <em>content</em> when you edit it. That means if you edit a page/post, or someone leaves a comment, it'll change. Otherwise, you have to purge the whole cache. The plugin will do this for you if you change your theme, but not when you edit your theme. 
 
-Make sure your Varnish VCL is configured correctly to purge all the right pages.
+That said, if you use Jetpack's CSS editor, it will purge the whole cache on save.
 
-= Can I use this with a proxy service like CloudFlare? =
+= How do I manually purge the whole cache? =
 
-Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
-
-If you use the Jetpack CSS editor, however, your changes will show up.
+Click the 'Purge Varnish Cache' button on the "Right Now" Dashboard (see the screenshot if you can't find it).
 
 = Why is nothing caching when I use PageSpeed? =
 
@@ -55,6 +73,12 @@ Because PageSpeed likes to put in Caching headers to say not to cache. To fix th
 `
 
 If you're using nginx, it's `pagespeed ModifyCachingHeaders off;`
+
+= Can I use this with a proxy service like CloudFlare? =
+
+Yes, but you'll need to make some additonal changes (see "Why aren't my changes showing when I use CloudFlare or another proxy?" below).
+
+If you use the Jetpack CSS editor, however, your changes will show up.
 
 = Why aren't my changes showing when I use CloudFlare or another proxy? =
 
@@ -84,7 +108,32 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
     <li><strong>DreamHost</strong> - If you're using DreamPress, go into the Panel and click on the DNS settings for the domain. The entry for <em>resolve-to.domain</em> is your varnish server: `resolve-to.www A 208.97.157.172`</li>
 </ul>
 
+= Why don't my gzip'd pages flush? =
+
+Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported. If you're not sure, ask your host if Varnish is set to purge gzip'd pages.
+
+= Why isn't the whole cache purge working? =
+
+The plugin sends a PURGE command of <code>/.*</code> and `X-Purge-Method` in the header with a value of regex. If your Varnish server doesn't doesn't understand the wildcard, you can configure it to check for the header.
+
+= How do I configure my VCL? =
+
+This is a beyond this plugin question, however here are some links to other people who use this plugin and have made public their VCLs:
+
+* <a href="https://github.com/dreamhost/varnish-vcl-collection">DreamHost's Varnish VCL Collection</a>
+
+All of these VCLs work with this plugin.
+
 == Changelog ==
+
+= 3.0 =
+* Adds 'Purge Varnish' button
+* More selective purging, to account for different server setups
+* Clarify requirements (Varnish and Pretty Permalinks)
+
+= 2.3 =
+* Purge images on deletion
+* Fix for a VarnishIP when behind proxy servers not working on all hosts (props Berler)
 
 = 2.2.1 = 
 * typo (hit . instead of / - Props John B. Manos)
@@ -103,3 +152,7 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 = 1.2.0 =
 * Moved actual request execution to "shutdown" event
 * Removed GET request due to bad performance impact
+
+== Screenshots ==
+
+1. What the button looks like
