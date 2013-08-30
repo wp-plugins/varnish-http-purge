@@ -3,14 +3,14 @@
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
-Version: 3.0b
+Version: 3.0
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 License: http://www.apache.org/licenses/LICENSE-2.0
 
-Original Author: Leon Weidauer ( http:/www.lnwdr.de/ )
-
 Copyright 2013: Mika A. Epstein (email: ipstenu@ipstenu.org)
+
+Original Author: Leon Weidauer ( http:/www.lnwdr.de/ )
 
     This file is part of Varnish HTTP Purge, a plugin for WordPress.
 
