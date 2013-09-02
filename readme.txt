@@ -12,9 +12,7 @@ Varnish HTTP Purge sends a PURGE request to the URL of a page or post every time
 
 <a href="https://www.varnish-cache.org/">Varnish</a> is a web application accelerator also known as a caching HTTP reverse proxy. You install it in front of any server that speaks HTTP and configure it to cache the contents. This plugin <em>does not</em> install Varnish for you. It's expected you already did that.
 
-Not all pages are purged every time, depending on your Varnish configuration. By default, the plugin will purge the following:
-
-When a post, page, or custom post type is edited, or a new comment is added, the following pages will purge:
+Not all pages are purged every time, depending on your Varnish configuration. When a post, page, or custom post type is edited, or a new comment is added, <em>only</em> the following pages will purge:
 
 * The front page
 * The post/page edited
@@ -24,14 +22,18 @@ In addition, your entire cache will be purged on the following actions:
 
 * Changing permalinks
 * Changing themes
+* Press the 'flush cache' button
+
+= The future ... =
+
+We're going to sit down and look into how the plugin is structured to make it even faster and more organized. Please send coffee.
 
 == Installation ==
 No WordPress configuration needed.
 
 = Requirements =
-Pretty Permalinks must be enabled.
-
-Varnish 3.x or higher must be installed on your webserver.
+* Pretty Permalinks enabled
+* Varnish 3.x or higher
 
 = Varnish Config Best Practices =
 
@@ -63,14 +65,7 @@ Click the 'Purge Varnish Cache' button on the "Right Now" Dashboard (see the scr
 
 = Why is nothing caching when I use PageSpeed? =
 
-Because PageSpeed likes to put in Caching headers to say not to cache. To fix this, you need to put this in your .htaccess:
-
-`
-<IfModule pagespeed_module>
-    ModPagespeed on
-    ModPagespeedModifyCachingHeaders off
-</IfModule>
-`
+Because PageSpeed likes to put in Caching headers to say <em>not</em> to cache. To fix this, you need to put this in your .htaccess section for PageSpeed: `ModPagespeedModifyCachingHeaders off`
 
 If you're using nginx, it's `pagespeed ModifyCachingHeaders off;`
 
@@ -90,7 +85,7 @@ To fix this, add the following to your wp-config.php file:
 
 Replace "123.45.67.89" with the IP of your <em>Varnish Server</em> (not CloudFlare, Varnish). <em>DO NOT</em> put in http in this define.
 
-You can also set the option `vhp_varnish_ip` in the database. This will NOT take precedence over the define, however it's there to let hosts who are using something like wp-cli do this:
+You can also set the option `vhp_varnish_ip` in the database. This will NOT take precedence over the define, it's just there to let hosts who are using something like wp-cli do this for you in an automated fashion:
 
 `wp option add vhp_varnish_ip 123.45.67.89`
 
@@ -110,7 +105,7 @@ If your webhost set up Varnish for you, you may need to ask them for the specifi
 
 = Why don't my gzip'd pages flush? =
 
-Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported. If you're not sure, ask your host if Varnish is set to purge gzip'd pages.
+Make sure your Varnish VCL is configured correctly to purge all the right pages. This is normally an issue with Varnish 2, which is not supported.
 
 = Why isn't the whole cache purge working? =
 
@@ -129,6 +124,8 @@ All of these VCLs work with this plugin.
 = 3.0 =
 * Adds 'Purge Varnish' button
 * More selective purging, to account for different server setups
+* Tighened up what purges and when
+* Flushing categories and tags (per code from WP Super Cache, thanks!)
 * Clarify requirements (Varnish and Pretty Permalinks)
 
 = 2.3 =
