@@ -3,7 +3,7 @@ Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 3.0
+Stable tag: 3.2
 
 Purge Varnish Cache when pages are modified.
 
@@ -120,6 +120,12 @@ This is a beyond this plugin question, however here are some links to other peop
 All of these VCLs work with this plugin.
 
 == Changelog ==
+
+= 3.2 =
+* Correcting conflict with host's default config.
+
+= 3.1 =
+* Refactoring Cleanup (otherwise known as Copy/Pasta error in variable name). (props Shredder)
 
 = 3.0 =
 * Adds 'Purge Varnish' button
