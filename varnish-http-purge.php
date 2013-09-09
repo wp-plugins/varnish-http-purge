@@ -3,7 +3,7 @@
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
-Version: 3.0
+Version: 3.3
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 License: http://www.apache.org/licenses/LICENSE-2.0
@@ -84,7 +84,7 @@ class VarnishPurger {
             'edit_post',
             'delete_attachment',
             'switch_theme',
-            'generate_rewrite_rules'
+            //'generate_rewrite_rules'
         );
     }
 
@@ -110,7 +110,7 @@ class VarnishPurger {
             $pregex = '.*';
             $varnish_x_purgemethod = 'regex';
         } else {
-            $varnish_x_purgemethod = 'exact';
+            $varnish_x_purgemethod = 'default';
         }
 
         // Build a varniship
@@ -129,7 +129,7 @@ class VarnishPurger {
 
         // Cleanup CURL functions to be wp_remote_request and thus better
         // http://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin
-        wp_remote_request($purgeme, array('method' => 'PURGE', 'headers' => array( 'host' => $p['host'], 'X-Purge-Method' => $varnish_x_purge ) ) );
+        wp_remote_request($purgeme, array('method' => 'PURGE', 'headers' => array( 'host' => $p['host'], 'X-Purge-Method' => $varnish_x_purgemethod ) ) );
     }
 
     public function purgePost($postId) {

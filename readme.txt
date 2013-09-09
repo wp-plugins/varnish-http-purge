@@ -3,7 +3,7 @@ Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.4
 Tested up to: 3.6
-Stable tag: 3.0
+Stable tag: 3.3
 
 Purge Varnish Cache when pages are modified.
 
@@ -20,13 +20,18 @@ Not all pages are purged every time, depending on your Varnish configuration. Wh
 
 In addition, your entire cache will be purged on the following actions:
 
-* Changing permalinks
+* <del>Changing permalinks</del>
 * Changing themes
 * Press the 'flush cache' button
 
 = The future ... =
 
-We're going to sit down and look into how the plugin is structured to make it even faster and more organized. Please send coffee.
+We're going to sit down and look into how the plugin is structured to make it even faster and more organized. Please send coffee. Here's the wish list:
+
+* Only purge all automatically once an hour (manual button click will continue to work)
+* Refactor automated purge all to be kinder
+* Reorganize code for sanity
+* Get rid of the need to parse_url()
 
 == Installation ==
 No WordPress configuration needed.
@@ -121,6 +126,15 @@ All of these VCLs work with this plugin.
 
 == Changelog ==
 
+= 3.3 =
+* Quick and dirty fix for a plugin that is causing the URLs to purge <em>ALL THE TIME</em>
+
+= 3.2 =
+* Correcting conflict with host's default config.
+
+= 3.1 =
+* Refactoring Cleanup (otherwise known as Copy/Pasta error in variable name). (props Shredder)
+
 = 3.0 =
 * Adds 'Purge Varnish' button
 * More selective purging, to account for different server setups
@@ -153,3 +167,9 @@ All of these VCLs work with this plugin.
 == Screenshots ==
 
 1. What the button looks like
+
+== Upgrade Notice ==
+
+= 3.3 =
+
+Quick fix to prevent other plugins which flush permalinks from flushing all the cache all the time (and causing bad performance issues). A long term fix is being researched.
