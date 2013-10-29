@@ -2,7 +2,7 @@
 Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.4
-Tested up to: 3.6
+Tested up to: 3.7
 Stable tag: 3.3
 
 Purge Varnish Cache when pages are modified.
