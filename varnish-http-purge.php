@@ -3,10 +3,11 @@
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
-Version: 3.3
+Version: 3.3.1
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 License: http://www.apache.org/licenses/LICENSE-2.0
+Text Domain: varnish-http-purge
 
 Copyright 2013: Mika A. Epstein (email: ipstenu@ipstenu.org)
 
@@ -27,6 +28,7 @@ class VarnishPurger {
     protected $purgeUrls = array();
     
     public function __construct() {
+        define('varnish-http-purge', true);
         add_action( 'init', array( &$this, 'init' ) );
         //add_action( 'admin_bar_menu', array( $this, 'varnish_links' ), 100 );
         add_action( 'rightnow_end', array( $this, 'varnish_rightnow' ) );
@@ -38,7 +40,7 @@ class VarnishPurger {
         }
         add_action( 'shutdown', array($this, 'executePurge') );
 
-        if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('helf_vhp') ) {
+        if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('varnish-http-purge') ) {
             add_action( 'admin_notices' , array( $this, 'purgeMessage'));
         }
 
@@ -49,18 +51,18 @@ class VarnishPurger {
     }
 
     function purgeMessage() {
-        echo "<div id='message' class='updated fade'><p><strong>".__('Varnish purge flushed!', helf_vhp)."</strong></p></div>";
+        echo "<div id='message' class='updated fade'><p><strong>".__('Varnish purge flushed!', 'varnish-http-purge')."</strong></p></div>";
     }
     
     function prettyPermalinksMessage() {
-        echo "<div id='message' class='error'><p>".__( 'Varnish HTTP Purge requires you to use custom permalinks. Please go to the <a href="options-permalink.php">Permalinks Options Page</a> to configure them.', helf_vhp )."</p></div>";
+        echo "<div id='message' class='error'><p>".__( 'Varnish HTTP Purge requires you to use custom permalinks. Please go to the <a href="options-permalink.php">Permalinks Options Page</a> to configure them.', 'varnish-http-purge' )."</p></div>";
     }
 
     function varnish_rightnow() {
         if (current_user_can('activate_plugins')) {
-            $url = wp_nonce_url(admin_url('?vhp_flush_all'), 'helf_vhp');
-            $intro = sprintf( __('<a href="%1$s">Varnish HTTP Purge</a> automatically purges your posts when published or updated. Sometimes you need a manual flush. Press the button below to force it to purge your entire cache.', helf_vhp ), 'http://wordpress.org/plugins/varnish-http-purge/' );
-            $button = sprintf( __('<p class="button"><a href="%1$s"><strong>Purge Varnish Cache</strong></a></p>', helf_vhp ), $url );
+            $url = wp_nonce_url(admin_url('?vhp_flush_all'), 'varnish-http-purge');
+            $intro = sprintf( __('<a href="%1$s">Varnish HTTP Purge</a> automatically purges your posts when published or updated. Sometimes you need a manual flush. Press the button below to force it to purge your entire cache.', 'varnish-http-purge' ), 'http://wordpress.org/plugins/varnish-http-purge/' );
+            $button = sprintf( __('<p class="button"><a href="%1$s"><strong>Purge Varnish Cache</strong></a></p>', 'varnish-http-purge' ), $url );
             $text = $intro . '<br />' . $button;
             echo "<p class='varnish-rightnow'>$text</p>\n";
         }
@@ -72,8 +74,8 @@ class VarnishPurger {
           if ( !is_super_admin() || !is_admin_bar_showing() || !is_admin() )
         return;
 
-        $url = wp_nonce_url(admin_url('?vhp_flush_all'), 'helf_vhp');
-        $wp_admin_bar->add_menu( array( 'id' => 'varnish_text', 'title' => __( 'Purge Varnish', helf_vhp ), 'href' => $url ) );
+        $url = wp_nonce_url(admin_url('?vhp_flush_all'), 'varnish-http-purge');
+        $wp_admin_bar->add_menu( array( 'id' => 'varnish_text', 'title' => __( 'Purge Varnish', 'varnish-http-purge' ), 'href' => $url ) );
     }
 
     protected function getRegisterEvents() {
@@ -84,7 +86,6 @@ class VarnishPurger {
             'edit_post',
             'delete_attachment',
             'switch_theme',
-            //'generate_rewrite_rules'
         );
     }
 
@@ -96,7 +97,7 @@ class VarnishPurger {
         }
         
         if (empty($purgeUrls)) {
-            if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('helf_vhp') ) { 
+            if ( isset($_GET['vhp_flush_all']) && current_user_can('manage_options') && check_admin_referer('varnish-http-purge') ) { 
                 $this->purgeUrl( home_url() .'/?vhp=regex' );
             }
         }      
