@@ -3,7 +3,7 @@ Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.4
 Tested up to: 3.7
-Stable tag: 3.3
+Stable tag: 3.3.1
 
 Purge Varnish Cache when pages are modified.
 
@@ -118,13 +118,16 @@ The plugin sends a PURGE command of <code>/.*</code> and `X-Purge-Method` in the
 
 = How do I configure my VCL? =
 
-This is a beyond this plugin question, however here are some links to other people who use this plugin and have made public their VCLs:
+This is a beyond this plugin question in a way, since I don't offer any Varnish Config help. I will say this, you absolutely must have PURGE set up in your VCL. This is still supported in Varnish v3, though may not be set up by default. Also, here are some links to other people who use this plugin and have made public their VCLs:
 
 * <a href="https://github.com/dreamhost/varnish-vcl-collection">DreamHost's Varnish VCL Collection</a>
 
 All of these VCLs work with this plugin.
 
 == Changelog ==
+
+= 3.3.1 =
+* Language Pack fixing.
 
 = 3.3 =
 * Quick and dirty fix for a plugin that is causing the URLs to purge <em>ALL THE TIME</em>
@@ -170,6 +173,4 @@ All of these VCLs work with this plugin.
 
 == Upgrade Notice ==
 
-= 3.3 =
-
-Quick fix to prevent other plugins which flush permalinks from flushing all the cache all the time (and causing bad performance issues). A long term fix is being researched.
+3.3.1 is just a language pack fix. Enjoy!
