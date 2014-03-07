@@ -3,7 +3,7 @@ Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 3.4
 Tested up to: 3.8
-Stable tag: 3.3.3
+Stable tag: 3.3.4
 
 Purge Varnish Cache when pages are modified.
 
@@ -128,6 +128,9 @@ This is a beyond this plugin question in a way, since I don't offer any Varnish 
 All of these VCLs work with this plugin.
 
 == Changelog ==
+
+= 3.3.4 =
+* Rollback. Sorry.
 
 = 3.3.3 =
 * Per request of Jetpack team, added in a <code>wp_cache_flush()</code> call when manually purging. This should only impact server side PHP caches (APC, Memcached etc)
