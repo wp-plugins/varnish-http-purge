@@ -3,7 +3,7 @@
 Plugin Name: Varnish HTTP Purge
 Plugin URI: http://wordpress.org/extend/plugins/varnish-http-purge/ 
 Description: Sends HTTP PURGE requests to URLs of changed posts/pages when they are modified. 
-Version: 3.4-beta
+Version: 3.4
 Author: Mika Epstein
 Author URI: http://halfelf.org/
 License: http://www.apache.org/licenses/LICENSE-2.0
@@ -29,7 +29,8 @@ class VarnishPurger {
     protected $purgeUrls = array();
     
     public function __construct() {
-        define('varnish-http-purge', true);
+        defined('varnish-http-purge') ||define('varnish-http-purge', true);
+        defined('VHP_VARNISH_IP') || define('VHP_VARNISH_IP', false );
         add_action( 'init', array( &$this, 'init' ) );
         add_action( 'activity_box_end', array( $this, 'varnish_rightnow' ), 100 );
     }
@@ -157,10 +158,10 @@ class VarnishPurger {
         }
 
         // Build a varniship
-        if ( !defined( 'VHP_VARNISH_IP' ) && VHP_VARNISH_IP ) {
-            $varniship = get_option('vhp_varnish_ip');
-        } else {
+        if ( VHP_VARNISH_IP != false ) {
             $varniship = VHP_VARNISH_IP;
+        } else {
+            $varniship = get_option('vhp_varnish_ip');
         }
 
         // If we made varniship, let it sail

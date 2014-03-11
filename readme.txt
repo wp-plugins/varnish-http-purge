@@ -145,6 +145,8 @@ All of these VCLs work with this plugin.
 = 3.4 =
 * Multisite support
 * Button in toolbar
+* Fix define message in debug mode
+* Better parsing for if you set the define in the DB or config.
 
 = 3.3.4 =
 * Rollback. Sorry.
