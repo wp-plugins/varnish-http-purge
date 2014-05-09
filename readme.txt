@@ -142,6 +142,9 @@ All of these VCLs work with this plugin.
 
 == Changelog ==
 
+= 3.4.1 =
+* Isset wrap for URL path and query which may not be set in rare conditions (props <a href="https://wordpress.org/support/topic/undefined-index-notices-4">hsz</a>)
+
 = 3.4 =
 * Multisite support
 * Button in toolbar
