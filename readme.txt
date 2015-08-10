@@ -2,7 +2,7 @@
 Contributors: techpriester, Ipstenu, DH-Shredder
 Tags: varnish, purge, cache
 Requires at least: 4.0
-Tested up to: 4.2
+Tested up to: 4.3
 Stable tag: 3.7.3
 
 Purge Varnish Cache when post content on your site is modified.
@@ -144,7 +144,17 @@ This is a question beyond the support of plugin. I don't offer any Varnish Confi
 
 All of these VCLs work with this plugin.
 
+= I added in an event to purge on and it's not working =
+
+If you're using `varnish_http_purge_events` then you have to make sure your event spits out a post ID.
+
 == Changelog ==
+
+= 3.8 =
+* Add varnish_http_purge_events filter to allow people to add their own events for purging. (props @norcross)
+* Add a method to grab the response from purge request and pass to the 'after_purge_url' action for debugging. (props @shaula)
+* Added wp-cli command: wp varnish purge (to purge varnish)
+* Adding some docblocks
 
 = 3.7.3 = 
 * Add varnish_http_purge_schema filter for changing the default schema. The default remains http (even if you set your home and/or site URL to https) because of sanity, but in order to support some edge cases, they can filter if they want. (props Drumba)
